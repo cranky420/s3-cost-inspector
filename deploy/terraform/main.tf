@@ -90,14 +90,7 @@ variable "table_names" {
   description = "List of Athena table names (inventory tables) to query"
   type        = list(string)
   default     = [
-    "com_mobilewalla_rtb_avro_device_id_prod", "com_mobilewalla_rtb_avro_prime_prod",
-    "com_mobilewalla_rtb_device_id_prod", "com_mw_pinot", "com_mw_poi_cache",
-    "com_mw_sameer", "digicenter_us_mobilewalla_com", "eskimi_us_mobilewalla_com",
-    "mobilewalla_com_rtb_prod", "mobilewalla_partner_modfx", "mobilewalla_partner_quadrant",
-    "mobilewalla_partner_scanbuy", "mobilewalla_partner_tamoco_us", "mw_com_ds_kajanan",
-    "mw_daas_raw_intermediate", "mw_data_aggregated_standard", "mw_data_aggregated_timeseries",
-    "mw_device_profile", "mw_external_devices", "mw_test", "mwstats", "partner_mobilewalla_com",
-    "resources_mobilewalla_com", "reveal_mobile_backup", "veraset_us_mobilewalla_com"
+	"my_bucket_1", "my_bucket_2", "my_bucket_3"
   ]
 }
 
