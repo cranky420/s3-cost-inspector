@@ -1,0 +1,37 @@
+Notes & manual steps you'll still need to do
+
+SES identity: If SES is in sandbox, verify SENDER_EMAIL and RECIPIENT_EMAIL (or move SES to production). Terraform can create domain identities, but you must add DNS records to verify them — this is environment-specific so I left it manual. Without SES verification, email sending will fail.
+
+Glue / Athena tables: This Terraform does not create the Glue tables pointing to S3 Inventory Parquet. You must already have Athena/Glue tables for each inventory dataset (or run scripts that create them). The Lambda expects those table names (provided via TABLE_NAMES environment variable). Option: you can later replace the hard-coded TABLE_NAMES with dynamic discovery using Glue in the Lambda code (I can help).
+
+Bucket name uniqueness: The S3 bucket name is generated using a random suffix to avoid collisions. If you prefer a fixed name, set output_bucket_prefix to a desired value and remove random_id if you want absolute control.
+
+Lambda package: Terraform uses the local lambda_s3_cost_report.py and packages it into a zip at lambda_package.zip. Ensure that file exists where you run terraform. If your lambda uses external Python packages, you’ll need to build a proper deployment package (pip install into a folder then zip) and point data.archive_file to that zip instead.
+
+Timeouts / Query runtime: Athena may take time for big scans. Lambda timeout is set to 900 seconds (15 minutes) — adjust if needed. Consider breaking the job into Step Functions if your queries require longer or more robust retries.
+
+Permissions: The IAM policy in the template is fairly broad in places (e.g., glue/athena resources set to "*"). Lock it down later to least privilege for production.
+
+
+
+
+How to use (short)
+
+Put this main.tf alongside your lambda_s3_cost_report.py.
+
+Edit variables in the file directly or create terraform.tfvars with values:
+
+sender_email  = "no-reply@yourdomain.com"
+recipient_email = "your-email@example.com"
+
+
+Run:
+
+terraform init
+terraform apply
+
+
+After apply completes, Terraform will show the S3 bucket name and Lambda function. Athena results will be written to s3://<output_bucket>/<output_prefix> and reports to s3://<output_bucket>/<report_prefix>.
+
+
+
